@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:first/color_paleete.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
@@ -8,17 +9,18 @@ import '../models/transactions_model.dart';
 class TransactionsList extends StatelessWidget {
   final Size size;
   final List<Transactionsmodel> list;
+  final Function deleteTx;
   // ignore: prefer_final_fields
 
-  TransactionsList({
-    super.key,
-    required this.size,
-    required this.list,
-  });
+  TransactionsList(
+      {super.key,
+      required this.size,
+      required this.list,
+      required this.deleteTx});
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 300,
+      height: size.height * 0.6,
       child: list.isEmpty
           ? Center(
               child: Container(
@@ -42,6 +44,14 @@ class TransactionsList extends StatelessWidget {
                   title: Text(list[index].name),
                   subtitle:
                       Text(DateFormat.yMMMM().format(list[index].dateTime)),
+                  trailing: IconButton(
+                      onPressed: () {
+                        deleteTx(list[index].id);
+                      },
+                      icon: Icon(
+                        Icons.delete,
+                        color: ColorHelper().green,
+                      )),
                 ),
               ),
             ),

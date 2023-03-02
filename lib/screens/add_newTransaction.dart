@@ -14,22 +14,19 @@ class NewTransaction extends StatefulWidget {
 }
 
 class _NewTransactionState extends State<NewTransaction> {
+  DateTime? chooseDate;
+
   final titleController = TextEditingController();
+
   final amountController = TextEditingController();
-
-  late DateTime selectedTime;
-
   void submited() {
     final entredName = titleController.text;
     final entredAmount = amountController.text;
-    if (entredAmount.isEmpty) {
+    if (entredName.isEmpty || entredAmount.isEmpty || chooseDate == null) {
       return;
     }
-    if (entredName.isEmpty || entredAmount.isEmpty || selectedTime == null) {
-      return;
-    }
-    widget.addTx(titleController.text, double.parse(amountController.text),
-        selectedTime);
+    widget.addTx(
+        titleController.text, double.parse(amountController.text), chooseDate);
     titleController.clear();
     amountController.clear();
     Navigator.of(context).pop();
@@ -50,12 +47,11 @@ class _NewTransactionState extends State<NewTransaction> {
       firstDate: DateTime(2000),
       lastDate: DateTime.now(),
     ).then((value) {
-      if (selectedTime == null) {
+      if (value == null) {
         return;
       }
       setState(() {
-        selectedTime = value!;
-        print(selectedTime);
+        chooseDate = value;
       });
     });
   }
@@ -70,32 +66,74 @@ class _NewTransactionState extends State<NewTransaction> {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: <Widget>[
             TextField(
-              onSubmitted: (_) => submited,
-              decoration: InputDecoration(labelText: 'Title'),
-              controller: titleController,
+                controller: titleController,
+                onSubmitted: (_) => submited,
+                decoration: InputDecoration(
+                    labelText: 'Title',
+                    hintText: 'Enter expense title',
+                    labelStyle: TextStyle(color: Colors.teal),
+                    hintStyle: TextStyle(color: Colors.teal),
+                    errorStyle: TextStyle(color: Colors.red),
+                    filled: true,
+                    fillColor: Colors.teal.withOpacity(0.1),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.teal),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.teal),
+                      borderRadius: BorderRadius.circular(10),
+                    ))),
+            SizedBox(
+              height: 17,
             ),
             TextField(
-              onSubmitted: (_) => submited,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(labelText: 'Amount'),
-              controller: amountController,
-            ),
+                controller: amountController,
+                onSubmitted: (_) => submited,
+                decoration: InputDecoration(
+                    labelText: 'amount',
+                    hintText: 'Enter amount title',
+                    labelStyle: TextStyle(color: Colors.teal),
+                    hintStyle: TextStyle(color: Colors.teal),
+                    errorStyle: TextStyle(color: Colors.red),
+                    filled: true,
+                    fillColor: Colors.teal.withOpacity(0.1),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.teal),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.teal),
+                      borderRadius: BorderRadius.circular(10),
+                    ))),
             Row(
               children: <Widget>[
-                // ignore: unnecessary_null_comparison
-                Text(selectedTime == null
+                Text(chooseDate == null
                     ? 'No Date Selected'
-                    : DateFormat.yMd().format(selectedTime)),
+                    : DateFormat().add_yMd().format(chooseDate!)),
                 TextButton(
                     onPressed: selectDate, child: Text('Select Date Time'))
               ],
             ),
-            TextButton(
-              child: Text('Add Transaction'),
-              onPressed: () {
+            InkWell(
+              onTap: () {
                 submited();
               },
-            ),
+              child: Container(
+                height: 60,
+                width: 170,
+                decoration: BoxDecoration(
+                    color: Colors.black54,
+                    borderRadius: BorderRadius.circular(20)),
+                child: Center(
+                  child: Text(
+                    'add New Trx',
+                    style: TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+            )
           ],
         ),
       ),

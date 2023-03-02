@@ -30,16 +30,22 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _addNewTransaction(
-      String txTitle, double txAmount, DateTime selectedTime) {
+      String txTitle, double txAmount, DateTime dateTimeChoosen) {
     final newTx = Transactionsmodel(
       name: txTitle,
       amount: txAmount,
-      dateTime: selectedTime,
+      dateTime: dateTimeChoosen,
       id: DateTime.now().toString(),
     );
 
     setState(() {
       _userTransactions.add(newTx);
+    });
+  }
+
+  void deleteItem(String id) {
+    setState(() {
+      _userTransactions.removeWhere((element) => element.id == id);
     });
   }
 
@@ -69,28 +75,13 @@ class _HomeScreenState extends State<HomeScreen> {
     var size = MediaQuery.of(context).size;
     ColorHelper colorHelper = ColorHelper();
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Expenseve'),
+      appBar: appBar(colorHelper),
+      floatingActionButton: FloatingActionButton(
         backgroundColor: colorHelper.teal,
-      ),
-      floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          FloatingActionButton(
-            onPressed: () {
-              setState(() {
-                _userTransactions.clear();
-              });
-            },
-            child: Icon(Icons.delete),
-          ),
-          FloatingActionButton(
-            onPressed: () {
-              startAddTrx(context);
-            },
-            child: Icon(Icons.add),
-          ),
-        ],
+        onPressed: () {
+          startAddTrx(context);
+        },
+        child: Icon(Icons.add),
       ),
       body: SizedBox(
         height: size.height,
@@ -100,6 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Container(
+                // ignore: prefer_const_literals_to_create_immutables
                 decoration: BoxDecoration(boxShadow: [
                   BoxShadow(
                       color: Colors.black26,
@@ -107,18 +99,34 @@ class _HomeScreenState extends State<HomeScreen> {
                       blurRadius: 8)
                 ]),
                 margin: EdgeInsets.all(20),
-                child: Chart(
-                  trList: filtredList.toList(),
+                child: Container(
+                  height: size.height * 0.3 -
+                      appBar(colorHelper).preferredSize.height,
+                  child: Chart(
+                    trList: filtredList.toList(),
+                  ),
                 ),
               ),
-              TransactionsList(
-                list: _userTransactions,
-                size: size,
+              Container(
+                height: size.height * 0.7 -
+                    appBar(colorHelper).preferredSize.height,
+                child: TransactionsList(
+                  list: _userTransactions,
+                  size: size,
+                  deleteTx: deleteItem,
+                ),
               )
             ],
           ),
         ),
       ),
+    );
+  }
+
+  AppBar appBar(ColorHelper colorHelper) {
+    return AppBar(
+      title: Text('Expenseve'),
+      backgroundColor: colorHelper.teal,
     );
   }
 }
