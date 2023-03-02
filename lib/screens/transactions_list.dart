@@ -20,7 +20,6 @@ class TransactionsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: size.height * 0.6,
       child: list.isEmpty
           ? Center(
               child: Container(
@@ -39,7 +38,9 @@ class TransactionsList extends StatelessWidget {
                   leading: CircleAvatar(
                     radius: 30,
                     child: Center(
-                        child: Text("\$ ${list[index].amount.toString()}")),
+                        child: FittedBox(
+                            child:
+                                Text("\$ ${list[index].amount.toString()}"))),
                   ),
                   title: Text(list[index].name),
                   subtitle:
